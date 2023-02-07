@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>aria2LauncherClass</class>
+ <widget class="QMainWindow" name="aria2LauncherClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>673</width>
+    <height>436</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout"/>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>673</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="switchPage">
+    <property name="title">
+     <string>页面切换</string>
+    </property>
+    <addaction name="cmdPage"/>
+    <addaction name="webuiPage"/>
+   </widget>
+   <widget class="QMenu" name="switchWebui">
+    <property name="title">
+     <string>WebUI样式切换</string>
+    </property>
+    <addaction name="ariang"/>
+    <addaction name="webui"/>
+    <addaction name="yaaw"/>
+   </widget>
+   <widget class="QMenu" name="about">
+    <property name="title">
+     <string>关于</string>
+    </property>
+    <addaction name="aboutQt"/>
+    <addaction name="aboutThis"/>
+   </widget>
+   <widget class="QMenu" name="setSWW">
+    <property name="title">
+     <string>开机启动</string>
+    </property>
+    <addaction name="SWW"/>
+    <addaction name="NSWW"/>
+   </widget>
+   <addaction name="switchPage"/>
+   <addaction name="switchWebui"/>
+   <addaction name="setSWW"/>
+   <addaction name="about"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="cmdPage">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CMD窗口</string>
+   </property>
+  </action>
+  <action name="webuiPage">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>WebUI窗口</string>
+   </property>
+  </action>
+  <action name="ariang">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>AriaNG</string>
+   </property>
+  </action>
+  <action name="webui">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>webui-aria2</string>
+   </property>
+  </action>
+  <action name="yaaw">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>YAAW</string>
+   </property>
+  </action>
+  <action name="aboutQt">
+   <property name="text">
+    <string>关于Qt</string>
+   </property>
+  </action>
+  <action name="aboutThis">
+   <property name="text">
+    <string>关于本程序</string>
+   </property>
+  </action>
+  <action name="SWW">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>启用</string>
+   </property>
+  </action>
+  <action name="NSWW">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>禁用</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
