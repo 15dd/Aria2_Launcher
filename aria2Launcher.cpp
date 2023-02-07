@@ -4,11 +4,12 @@ aria2Launcher::aria2Launcher(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-    menuInitialize();
-    startAria2();
-
+    
     view = new QWebEngineView(this);
     view->hide();
+
+    startAria2();
+    menuInitialize();
 
     //QString path = QApplication::applicationDirPath() + "/index.html";  //将html文件放入debug目录下
     //view->setUrl(QUrl(path));
@@ -16,8 +17,11 @@ aria2Launcher::aria2Launcher(QWidget *parent)
     QString htmlPath = "D:/Download/yaaw/index.html";
     view->load(QUrl("file:///" + htmlPath));
 
-    //connect(ui.aboutQt, SIGNAL(triggered()), this, SLOT(showHtml()));
+    ui.cmdPage->setChecked(true);
+    ui.yaaw->setChecked(true);
+
     connect(ui.webuiPage, &QAction::triggered, this, &aria2Launcher::showHtml);
+    connect(ui.cmdPage, &QAction::triggered, this, &aria2Launcher::showCmd);
 }
 
 aria2Launcher::~aria2Launcher()
@@ -27,10 +31,16 @@ aria2Launcher::~aria2Launcher()
 }
 
 void aria2Launcher::showHtml() {
+    centralWidget()->setParent(0);
     setCentralWidget(view);
     view->show();
 }
 //https://blog.csdn.net/weixin_43193739/article/details/116333157
+
+void aria2Launcher::showCmd() {
+    centralWidget()->setParent(0);
+    setCentralWidget(aria2CmdWidget);
+}
 
 
 void aria2Launcher::menuInitialize() { //设置QActionGroup，使只能单选
@@ -52,17 +62,19 @@ void aria2Launcher::menuInitialize() { //设置QActionGroup，使只能单选
 }
 
 void aria2Launcher::startAria2() { //启动aria2c.exe
-    //pid = startProcess("aria2c --enable-rpc --rpc-allow-origin-all"); //启动aria2c.exe
-    pid = startProcess("aria2c.exe --conf-path='C:\\Users\\15726\\Desktop\\c++ test\\aria2Launcher\\x64\\Release\\aria2.conf'"); //启动aria2c.exe
-    HWND Hpid = (HWND)(QString::number(pid).toInt()); //将pid转为HWND类型的数据
+
+    pid = startProcess("aria2c --enable-rpc --rpc-allow-origin-all"); //启动aria2c.exe
+    //pid = startProcess("aria2c.exe --conf-path='C:\\Users\\15726\\Desktop\\c++ test\\aria2Launcher\\x64\\Release\\aria2.conf'"); //启动aria2c.exe
+    //HWND Hpid = (HWND)(QString::number(pid).toInt()); //将pid转为HWND类型的数据
 
     QLabel* showPid = new QLabel("pid:" + QString::number(pid), this); //状态栏显示aria2c.exe的pid
     ui.statusBar->addWidget(showPid);
 
     QWindow* aria2Cmd = QWindow::fromWinId(getProcessWId(pid)); //根据pid，将aria2c.exe的窗口嵌入至主窗口中
     aria2Cmd->setFlags(aria2Cmd->flags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
-    QWidget* aria2CmdWidget = QWidget::createWindowContainer(aria2Cmd);
+    aria2CmdWidget = QWidget::createWindowContainer(aria2Cmd);
     this->setCentralWidget(aria2CmdWidget);
+
 }
 
 qint64 aria2Launcher::startProcess(QString cmd) //启动程序

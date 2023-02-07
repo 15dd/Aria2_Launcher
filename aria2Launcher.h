@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QActionGroup>
 #include <QWebengineview>
+#include <QProcess>
 
 class aria2Launcher : public QMainWindow
 {
@@ -26,9 +27,12 @@ public:
     void startAria2();
     void menuInitialize();
     void showHtml();
+    void showCmd();
 
-    DWORD pid;
+    //DWORD pid;
+    qint64 pid;
     QWebEngineView* view;
+    QWidget* aria2CmdWidget;
 private:
     Ui::aria2LauncherClass ui;
 };
