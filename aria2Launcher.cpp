@@ -11,11 +11,14 @@ aria2Launcher::aria2Launcher(QWidget *parent)
     startAria2();
     menuInitialize();
 
-    //QString path = QApplication::applicationDirPath() + "/index.html";  //将html文件放入debug目录下
-    //view->setUrl(QUrl(path));
+    //QString path = QApplication::applicationDirPath() + "/yaaw/index.html";  //将html文件放入debug目录下
+    //view->load(QUrl(path));
     
-    QString htmlPath = "D:/Download/yaaw/index.html";
-    view->load(QUrl("file:///" + htmlPath));
+    //QString htmlPath = "D:/Download/yaaw/index.html";
+    //view->setUrl(QUrl("file:///" + htmlPath));
+
+    view->setUrl(QUrl("http://aria2c.com/"));
+
 
     ui.cmdPage->setChecked(true);
     ui.yaaw->setChecked(true);
