@@ -63,7 +63,8 @@ void aria2Launcher::menuInitialize() { //设置QActionGroup，使只能单选
 
 void aria2Launcher::startAria2() { //启动aria2c.exe
 
-    pid = startProcess("aria2c --enable-rpc --rpc-allow-origin-all"); //启动aria2c.exe
+    //pid = startProcess("aria2c --enable-rpc --rpc-allow-origin-all"); //启动aria2c.exe
+    pid = startProcess("aria2c --conf-path=aria2.conf"); //启动aria2c.exe
     //pid = startProcess("aria2c.exe --conf-path='C:\\Users\\15726\\Desktop\\c++ test\\aria2Launcher\\x64\\Release\\aria2.conf'"); //启动aria2c.exe
     //HWND Hpid = (HWND)(QString::number(pid).toInt()); //将pid转为HWND类型的数据
 
