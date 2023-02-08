@@ -25,21 +25,6 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="switchPage">
-    <property name="title">
-     <string>页面切换</string>
-    </property>
-    <addaction name="cmdPage"/>
-    <addaction name="webuiPage"/>
-   </widget>
-   <widget class="QMenu" name="switchWebui">
-    <property name="title">
-     <string>WebUI样式切换</string>
-    </property>
-    <addaction name="ariang"/>
-    <addaction name="webui"/>
-    <addaction name="yaaw"/>
-   </widget>
    <widget class="QMenu" name="about">
     <property name="title">
      <string>关于</string>
@@ -47,16 +32,6 @@
     <addaction name="aboutQt"/>
     <addaction name="aboutThis"/>
    </widget>
-   <widget class="QMenu" name="setSWW">
-    <property name="title">
-     <string>开机启动</string>
-    </property>
-    <addaction name="SWW"/>
-    <addaction name="NSWW"/>
-   </widget>
-   <addaction name="switchPage"/>
-   <addaction name="switchWebui"/>
-   <addaction name="setSWW"/>
    <addaction name="about"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>

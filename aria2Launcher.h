@@ -8,8 +8,10 @@
 #include <QMessagebox>
 #include <QLabel>
 #include <QActionGroup>
-#include <QWebengineview>
-#include <QProcess>
+#include <QSystemTrayIcon>
+#include <QDir>
+#include <QSettings>
+
 
 class aria2Launcher : public QMainWindow
 {
@@ -25,16 +27,24 @@ public:
     WId getProcessWId(qint64 pid);
 
     void startAria2();
-    void menuInitialize();
-    void showHtml();
-    void showCmd();
+    void trayInitialize();
+    void showOrHide();
 
     //DWORD pid;
     qint64 pid;
-    QWebEngineView* view;
     QWidget* aria2CmdWidget;
+    int n = 1;
 private:
     Ui::aria2LauncherClass ui;
+
+private:
+    QSystemTrayIcon* trayIcon;
+    QAction* SOH;
+    QAction* Close;
+    QMenu* Menu;
+
+private slots:
+    void on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason);
 };
 
 

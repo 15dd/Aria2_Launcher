@@ -5,26 +5,9 @@ aria2Launcher::aria2Launcher(QWidget *parent)
 {
     ui.setupUi(this);
     
-    view = new QWebEngineView(this);
-    view->hide();
-
     startAria2();
-    menuInitialize();
+    trayInitialize();
 
-    //QString path = QApplication::applicationDirPath() + "/yaaw/index.html";  //将html文件放入debug目录下
-    //view->load(QUrl(path));
-    
-    //QString htmlPath = "D:/Download/yaaw/index.html";
-    //view->setUrl(QUrl("file:///" + htmlPath));
-
-    view->setUrl(QUrl("http://aria2c.com/"));
-
-
-    ui.cmdPage->setChecked(true);
-    ui.yaaw->setChecked(true);
-
-    connect(ui.webuiPage, &QAction::triggered, this, &aria2Launcher::showHtml);
-    connect(ui.cmdPage, &QAction::triggered, this, &aria2Launcher::showCmd);
 }
 
 aria2Launcher::~aria2Launcher()
@@ -33,35 +16,46 @@ aria2Launcher::~aria2Launcher()
     KillProcess(pid);
 }
 
-void aria2Launcher::showHtml() {
-    centralWidget()->setParent(0);
-    setCentralWidget(view);
-    view->show();
+void aria2Launcher::trayInitialize() {
+    Menu = new QMenu(this);
+    QIcon icon("C:\\Users\\15726\\Desktop\\文件伪造器\\img\\Logo.ico");
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon(icon);
+    trayIcon->setToolTip("Aria2后台");
+    SOH = new QAction("显示/隐藏", this);
+    connect(SOH, &QAction::triggered, this, &aria2Launcher::showOrHide);
+    Close = new QAction("退出程序", this);
+    connect(Close, &QAction::triggered, qApp, &QApplication::quit);
+    connect(trayIcon, &QSystemTrayIcon::activated, this, &aria2Launcher::on_activatedSysTrayIcon);
+
+    Menu->addAction(SOH);
+    Menu->addSeparator();
+    Menu->addAction(Close);
+
+    trayIcon->setContextMenu(Menu);
+    trayIcon->show();
 }
-//https://blog.csdn.net/weixin_43193739/article/details/116333157
 
-void aria2Launcher::showCmd() {
-    centralWidget()->setParent(0);
-    setCentralWidget(aria2CmdWidget);
+void aria2Launcher::showOrHide() {
+    n++;
+    if (n % 2 == 0) {
+        this->hide();
+    }
+    else {
+        this->showNormal();
+    }
 }
 
+void aria2Launcher::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason) {
 
-void aria2Launcher::menuInitialize() { //设置QActionGroup，使只能单选
-    menuBar()->removeAction(ui.cmdPage);
-    menuBar()->removeAction(ui.webuiPage);
-
-    menuBar()->removeAction(ui.ariang);
-    menuBar()->removeAction(ui.webui);
-    menuBar()->removeAction(ui.yaaw);
-
-    QActionGroup* switchPageGroup = new QActionGroup(this);
-    ui.switchPage->addAction(switchPageGroup->addAction(ui.cmdPage));
-    ui.switchPage->addAction(switchPageGroup->addAction(ui.webuiPage));
-
-    QActionGroup* switchWebuiGroup = new QActionGroup(this);
-    ui.switchWebui->addAction(switchWebuiGroup->addAction(ui.ariang));
-    ui.switchWebui->addAction(switchWebuiGroup->addAction(ui.webui));
-    ui.switchWebui->addAction(switchWebuiGroup->addAction(ui.yaaw));
+    case QSystemTrayIcon::Trigger:
+        showOrHide();
+        break;
+    default:
+        break;
+    }
 }
 
 void aria2Launcher::startAria2() { //启动aria2c.exe
