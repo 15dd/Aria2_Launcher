@@ -88,7 +88,7 @@ qint64 aria2Launcher::startProcess(QString cmd) //启动程序
     si.dwFlags = STARTF_USESHOWWINDOW;
     si.wShowWindow = SW_HIDE;
 
-    bool bRet = CreateProcess(
+    bool bRet = CreateProcess(  
         NULL,
         (LPWSTR)cmd.toStdWString().c_str(),
         NULL,
