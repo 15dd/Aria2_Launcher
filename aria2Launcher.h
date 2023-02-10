@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_aria2Launcher.h"
+#include "about.h"
 #include "windows.h"
 #include <TlHelp32.h>
 #include <QWindow>
@@ -9,8 +10,7 @@
 #include <QLabel>
 #include <QActionGroup>
 #include <QSystemTrayIcon>
-#include <QDir>
-#include <QSettings>
+#include <QCloseEvent>
 
 
 class aria2Launcher : public QMainWindow
@@ -23,28 +23,21 @@ public:
 
     qint64 startProcess(QString cmd);
     BOOL KillProcess(DWORD ProcessId);
-
     WId getProcessWId(qint64 pid);
 
     void startAria2();
     void trayInitialize();
-    void showOrHide();
-
-    //DWORD pid;
+    void closeEvent(QCloseEvent* event);
+private:
     qint64 pid;
     QWidget* aria2CmdWidget;
-    int n = 1;
+    QCloseEvent* event;
 private:
-    Ui::aria2LauncherClass ui;
-
-private:
-    QSystemTrayIcon* trayIcon;
-    QAction* SOH;
-    QAction* Close;
-    QMenu* Menu;
-
+    Ui::aria2LauncherClass* ui;
+    about* aboutWin = new about(this);
 private slots:
     void on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason);
+    void showOrHide();
 };
 
 

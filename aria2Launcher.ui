@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Aria2 Launcher</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="aria2Launcher.qrc">
+    <normaloff>:/aria2Launcher/resource/img/ico.png</normaloff>:/aria2Launcher/resource/img/ico.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout"/>
@@ -82,11 +86,19 @@
    </property>
   </action>
   <action name="aboutQt">
+   <property name="icon">
+    <iconset resource="aria2Launcher.qrc">
+     <normaloff>:/aria2Launcher/resource/img/qt-logo.png</normaloff>:/aria2Launcher/resource/img/qt-logo.png</iconset>
+   </property>
    <property name="text">
     <string>关于Qt</string>
    </property>
   </action>
   <action name="aboutThis">
+   <property name="icon">
+    <iconset resource="aria2Launcher.qrc">
+     <normaloff>:/aria2Launcher/resource/img/ico.png</normaloff>:/aria2Launcher/resource/img/ico.png</iconset>
+   </property>
    <property name="text">
     <string>关于本程序</string>
    </property>
@@ -108,6 +120,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="aria2Launcher.qrc"/>
+ </resources>
  <connections/>
 </ui>

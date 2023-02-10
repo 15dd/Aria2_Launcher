@@ -93,10 +93,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <QtRcc Include="aria2Launcher.qrc" />
+    <QtUic Include="about.ui" />
     <QtUic Include="aria2Launcher.ui" />
     <QtMoc Include="aria2Launcher.h" />
+    <ClCompile Include="about.cpp" />
     <ClCompile Include="aria2Launcher.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="about.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

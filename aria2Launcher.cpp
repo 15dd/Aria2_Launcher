@@ -1,48 +1,74 @@
 ﻿#include "aria2Launcher.h"
 
 aria2Launcher::aria2Launcher(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+    ui(new Ui::aria2LauncherClass)
 {
-    ui.setupUi(this);
-    
+    ui->setupUi(this);
+
     startAria2();
     trayInitialize();
 
+    connect(ui->aboutQt, &QAction::triggered, [this]() {QMessageBox::aboutQt(this, tr("About Qt")); });
+    connect(ui->aboutThis, &QAction::triggered, [this]() {aboutWin->exec(); });
 }
 
 aria2Launcher::~aria2Launcher()
 {
     //system("taskkill /f /t /im cmd.exe");
     KillProcess(pid);
+    delete ui;
 }
 
+
 void aria2Launcher::trayInitialize() {
-    Menu = new QMenu(this);
-    QIcon icon("C:\\Users\\15726\\Desktop\\文件伪造器\\img\\Logo.ico");
-    trayIcon = new QSystemTrayIcon(this);
+    QMenu* Menu = new QMenu(this);
+    QIcon icon(":/aria2Launcher/resource/img/ico.png");
+    QSystemTrayIcon* trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(icon);
     trayIcon->setToolTip("Aria2后台");
-    SOH = new QAction("显示/隐藏", this);
-    connect(SOH, &QAction::triggered, this, &aria2Launcher::showOrHide);
-    Close = new QAction("退出程序", this);
-    connect(Close, &QAction::triggered, qApp, &QApplication::quit);
-    connect(trayIcon, &QSystemTrayIcon::activated, this, &aria2Launcher::on_activatedSysTrayIcon);
-
+    QAction* SOH = new QAction("显示/隐藏", this);
+    QAction* Close = new QAction("退出程序", this);
+    SOH->setIcon(QIcon(":/aria2Launcher/resource/img/show.png"));
+    Close->setIcon(QIcon(":/aria2Launcher/resource/img/close.png"));
+    
     Menu->addAction(SOH);
     Menu->addSeparator();
     Menu->addAction(Close);
 
     trayIcon->setContextMenu(Menu);
     trayIcon->show();
+
+    connect(SOH, &QAction::triggered, this, &aria2Launcher::showOrHide);
+    connect(Close, &QAction::triggered, [this]() {exit(0); });
+    connect(trayIcon, &QSystemTrayIcon::activated, this, &aria2Launcher::on_activatedSysTrayIcon);
+}
+
+void aria2Launcher::closeEvent(QCloseEvent* event) {
+    int id = QMessageBox::information(this, "二次确认", "是否退出程序?",QString("退出"), QString("最小化到系统托盘"), QString("取消"),2);
+    switch (id) {
+        case 0: {
+            event->accept();
+            break;
+        }
+        case 1: {
+            event->ignore();
+            this->hide();
+            break;
+        }
+        case 2: {
+            event->ignore();
+            break;
+        }
+    }
 }
 
 void aria2Launcher::showOrHide() {
-    n++;
-    if (n % 2 == 0) {
-        this->hide();
+    if (this->isHidden()) {
+        this->showNormal();
     }
     else {
-        this->showNormal();
+        this->hide();
     }
 }
 
@@ -65,8 +91,8 @@ void aria2Launcher::startAria2() { //启动aria2c.exe
     //pid = startProcess("aria2c.exe --conf-path='C:\\Users\\15726\\Desktop\\c++ test\\aria2Launcher\\x64\\Release\\aria2.conf'"); //启动aria2c.exe
     //HWND Hpid = (HWND)(QString::number(pid).toInt()); //将pid转为HWND类型的数据
 
-    QLabel* showPid = new QLabel("pid:" + QString::number(pid), this); //状态栏显示aria2c.exe的pid
-    ui.statusBar->addWidget(showPid);
+    QLabel* showPid = new QLabel("PID - " + QString::number(pid), this); //状态栏显示aria2c.exe的pid
+    ui->statusBar->addWidget(showPid);
 
     QWindow* aria2Cmd = QWindow::fromWinId(getProcessWId(pid)); //根据pid，将aria2c.exe的窗口嵌入至主窗口中
     aria2Cmd->setFlags(aria2Cmd->flags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
