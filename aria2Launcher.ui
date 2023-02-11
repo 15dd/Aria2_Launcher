@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>436</height>
+    <width>617</width>
+    <height>383</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,67 +25,35 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>673</width>
+     <width>617</width>
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="about">
+   <widget class="QMenu" name="more">
     <property name="title">
-     <string>关于</string>
+     <string>更多</string>
     </property>
-    <addaction name="aboutQt"/>
-    <addaction name="aboutThis"/>
+    <addaction name="separator"/>
+    <addaction name="set"/>
+    <addaction name="separator"/>
+    <addaction name="aboutqt"/>
+    <addaction name="aboutthis"/>
+    <addaction name="separator"/>
+    <addaction name="close"/>
    </widget>
-   <addaction name="about"/>
+   <addaction name="more"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="cmdPage">
-   <property name="checkable">
-    <bool>true</bool>
+  <action name="set">
+   <property name="icon">
+    <iconset resource="aria2Launcher.qrc">
+     <normaloff>:/aria2Launcher/resource/img/setting.png</normaloff>:/aria2Launcher/resource/img/setting.png</iconset>
    </property>
    <property name="text">
-    <string>CMD窗口</string>
+    <string>设置</string>
    </property>
   </action>
-  <action name="webuiPage">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>WebUI窗口</string>
-   </property>
-  </action>
-  <action name="ariang">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>AriaNG</string>
-   </property>
-  </action>
-  <action name="webui">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>webui-aria2</string>
-   </property>
-  </action>
-  <action name="yaaw">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>YAAW</string>
-   </property>
-  </action>
-  <action name="aboutQt">
+  <action name="aboutqt">
    <property name="icon">
     <iconset resource="aria2Launcher.qrc">
      <normaloff>:/aria2Launcher/resource/img/qt-logo.png</normaloff>:/aria2Launcher/resource/img/qt-logo.png</iconset>
@@ -94,7 +62,7 @@
     <string>关于Qt</string>
    </property>
   </action>
-  <action name="aboutThis">
+  <action name="aboutthis">
    <property name="icon">
     <iconset resource="aria2Launcher.qrc">
      <normaloff>:/aria2Launcher/resource/img/ico.png</normaloff>:/aria2Launcher/resource/img/ico.png</iconset>
@@ -103,20 +71,13 @@
     <string>关于本程序</string>
    </property>
   </action>
-  <action name="SWW">
-   <property name="checkable">
-    <bool>true</bool>
+  <action name="close">
+   <property name="icon">
+    <iconset resource="aria2Launcher.qrc">
+     <normaloff>:/aria2Launcher/resource/img/close.png</normaloff>:/aria2Launcher/resource/img/close.png</iconset>
    </property>
    <property name="text">
-    <string>启用</string>
-   </property>
-  </action>
-  <action name="NSWW">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>禁用</string>
+    <string>退出程序</string>
    </property>
   </action>
  </widget>

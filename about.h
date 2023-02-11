@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <QDialog>
+
 #include "ui_about.h"
 #include <QDesktopServices>
 #include <QUrl>

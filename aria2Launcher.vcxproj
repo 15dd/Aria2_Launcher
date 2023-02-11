@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="settingWindow.cpp" />
     <QtRcc Include="aria2Launcher.qrc" />
     <QtUic Include="about.ui" />
     <QtUic Include="aria2Launcher.ui" />
@@ -99,9 +100,23 @@
     <ClCompile Include="about.cpp" />
     <ClCompile Include="aria2Launcher.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="settingWindow.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="about.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="settingWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resource\img\ico.ico" />
+    <Image Include="resource\img\ico.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="aria2Launcher.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
