@@ -80,6 +80,25 @@
     <string>退出程序</string>
    </property>
   </action>
+  <action name="CMD">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>CMD</string>
+   </property>
+  </action>
+  <action name="WebUI">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>WebUI</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="aria2Launcher.qrc"/>

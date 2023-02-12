@@ -5,19 +5,19 @@ setting::setting(QWidget* parent) :
     ui(new Ui::setting) 
 {
     ui->setupUi(this);
-    this->setFixedSize(this->width(), this->height());
+    this->setFixedSize(this->width(), this->height());//固定窗口尺寸
 
     QString iniPath(QApplication::applicationDirPath() + "/aria2Launcher.ini");
-    bool flag = QFile::exists(iniPath);
+    bool flag = QFile::exists(iniPath); //检测aria2Launcher.ini是否存在
 
-    QFile Ini(iniPath);
-    iniSetting = new QSettings(iniPath, QSettings::IniFormat);
+    QFile Ini(iniPath); //有则打开，无则新建
+    iniSetting = new QSettings(iniPath, QSettings::IniFormat); //ini读写
 
-    if (flag) {
+    if (flag) { //如果存在，读取数据，初始化单选项
         Ini.open(QIODevice::ReadWrite);
         settingInitialize();
     }
-    else {
+    else { //如果没有ini，即第一次打开程序，配置默认选项
         this->sh = false;
         this->tn = true;
         startWithWindowsDisabled();
@@ -36,7 +36,7 @@ setting::~setting() {
     delete ui;
 }
 
-void setting::settingInitialize() { 
+void setting::settingInitialize() { //读取数据，初始化单选项
     QVariant sww = iniSetting->value("setting/startWithWindows").toString();
     if (sww.toBool() == true) {
         ui->radioButton->setChecked(true);

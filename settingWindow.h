@@ -11,8 +11,8 @@ public:
 	setting(QWidget* parent = 0);
 	~setting();
 
-	void settingInitialize();
-	void startWithWindows(bool isStart);
+	void settingInitialize(); //读取数据，初始化单选项
+	void startWithWindows(bool isStart); //开机启动
 public slots:
 	void startWithWindowsEnabled();
 	void startWithWindowsDisabled();

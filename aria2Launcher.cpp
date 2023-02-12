@@ -6,31 +6,34 @@ aria2Launcher::aria2Launcher(QWidget *parent)
 {
     ui->setupUi(this);
 
-    checkFile();
-    checkAria2Status();
-    trayInitialize();
-    showHide();
+    checkFile();//检测所需文件是否存在
+    uiInitialize();//ui初始化
+    showHide();//根据设置决定是显示窗口还是启动到托盘
+    checkAria2Status();//检测是否已经有aria2c运行,可选择新建进程或kill已存在的进程再新建进程
+
+    this->resize((this->width())+1,(this->height())+1);//界面刷新
     
-    connect(ui->aboutqt, &QAction::triggered, [this]() {QMessageBox::aboutQt(this, tr("About Qt")); });
-    connect(ui->aboutthis, &QAction::triggered, [this]() {aboutWin->exec(); });
-    connect(ui->set, &QAction::triggered, [this]() {settingWin->exec(); });
+    connect(ui->aboutqt, &QAction::triggered, [this]() {QMessageBox::aboutQt(this, tr("About Qt")); });//弹出qt版本
+    connect(ui->aboutthis, &QAction::triggered, [this]() {aboutWin->exec(); });//弹出关于窗口
+    connect(ui->set, &QAction::triggered, [this]() {settingWin->exec(); });//弹出设置窗口
     connect(ui->close, &QAction::triggered, [this]() {qApp->quit(); });
 }
 
 aria2Launcher::~aria2Launcher()
 {
     //system("taskkill /f /t /im cmd.exe");
-    if (pid != 0) {
+    if (pid != 0) { //如果aria2c还在运行，则kill
         KillProcess(pid);
     }
     delete ui;
 }
 
-void aria2Launcher::checkFile() {
+void aria2Launcher::checkFile() { //检测所需文件是否存在
     //QFileInfo file1(QApplication::applicationDirPath() + "/aria2c.exe");
     QFileInfo file1("aria2c.exe");
     QFileInfo file2("aria2.conf");
     QFileInfo file3("aria2.session");
+    QFileInfo file4("yaaw");
     if (!file1.isFile()) {
         QMessageBox::critical(this, "缺少文件", "aria2c.exe不存在，无法启动");
         exit(0);
@@ -43,9 +46,13 @@ void aria2Launcher::checkFile() {
         QMessageBox::critical(this, "缺少文件", "aria2.session不存在，无法启动");
         exit(0);
     }
+    else if (!file4.isDir()) {
+        QMessageBox::critical(this, "缺少文件夹", "/yaaw/不存在，无法启动");
+        exit(0);
+    }
 }
 
-void aria2Launcher::checkAria2Status() {
+void aria2Launcher::checkAria2Status() { //检测是否已经有aria2c运行,可选择新建进程或kill已存在的进程再新建进程
     int n = 1; //记录检测次数
     bool flag = true; 
     int findPid = (int)FindProcessIDByName("aria2c.exe"); //检测aria2c是否已经存在
@@ -53,7 +60,7 @@ void aria2Launcher::checkAria2Status() {
         int id = QMessageBox::information(this, "提示", QString("第%1次检测\naria2c.exe(PID:%2)已在运行(造成这种情况的原因可能是以下几点)\n1：有正在使用aria2c的应用\n2：您未正确关闭此软件或其他使用aria2c的软件\n\n继续：创建一个新的aria2c进程，不影响已存在的进程\n结束进程：结束已存在的aria2c进程(请确保您没有使用此进程下载文件中)\n\n如果您不知道如何选择，请点击<继续>").arg(n).arg(findPid), QString("继续"), QString("结束进程(PID:%1)").arg(findPid), 0);
         switch (id) {
         case 0: { //继续，选择此选项时退出循环，不再检测，直接创建新进程
-            start(); 
+            Start(); 
             flag = false;
             break;
         }
@@ -66,11 +73,11 @@ void aria2Launcher::checkAria2Status() {
         n++;
     }
     if (findPid == 0) { //杀完aria2后，新建aria2c的进程
-        start();
+        Start();
     }
 }
 
-void aria2Launcher::showHide() {
+void aria2Launcher::showHide() { //根据设置决定是显示窗口还是启动到托盘
     if (settingWin->sh == false) {
         this->show();
     }
@@ -80,7 +87,8 @@ void aria2Launcher::showHide() {
 }
 
 
-void aria2Launcher::trayInitialize() {
+void aria2Launcher::uiInitialize() { //ui初始化
+    //托盘初始化
     QMenu* Menu = new QMenu(this);
     QIcon icon(":/aria2Launcher/resource/img/ico.png");
     trayIcon = new QSystemTrayIcon(this);
@@ -101,15 +109,25 @@ void aria2Launcher::trayInitialize() {
     connect(SOH, &QAction::triggered, this, &aria2Launcher::showOrHide);
     connect(Close, &QAction::triggered, this, &aria2Launcher::quitApp);
     connect(trayIcon, &QSystemTrayIcon::activated, this, &aria2Launcher::on_activatedSysTrayIcon);
+
+    //设置打开webui按钮
+    QPushButton* openWeb = new QPushButton(this);
+    openWeb->setText("打开控制界面(Webui)");
+    statusBar()->addPermanentWidget(openWeb);
+
+    connect(openWeb, &QPushButton::clicked, [this]() {
+        QString path = "file:///" + QApplication::applicationDirPath() + "/yaaw/index.html";
+        QDesktopServices::openUrl(QUrl(path,QUrl::TolerantMode));
+        });
 }
 
-void aria2Launcher::closeEvent(QCloseEvent* event) {
-    if (!quitApp()) {
+void aria2Launcher::closeEvent(QCloseEvent* event) { //关闭事件
+    if (!quitApp()) { 
         event->ignore();
     }
 }
 
-bool aria2Launcher::quitApp() {
+bool aria2Launcher::quitApp() { //退出询问
     int id = QMessageBox::information(this, "二次确认", "是否退出程序?\n退出请确保没有文件正在下载中", QString("退出"), QString("最小化到系统托盘"), QString("取消"), 2);
     switch (id) {
     case 0: {
@@ -118,7 +136,7 @@ bool aria2Launcher::quitApp() {
     }
     case 1: {
         this->hide();
-        showWindowsMessage();
+        showWindowsMessage();//提示程序已进入托盘
         return false;
         break;
     }
@@ -129,13 +147,13 @@ bool aria2Launcher::quitApp() {
     }
 }
 
-void aria2Launcher::showWindowsMessage() {
+void aria2Launcher::showWindowsMessage() {//提示程序已进入托盘
     if (settingWin->tn == true) {
         trayIcon->showMessage("Aria2 Launcher已最小化到托盘", "如果您希望不再看到这个提示，请前往设置关闭");
     }
 }
 
-void aria2Launcher::showOrHide() {
+void aria2Launcher::showOrHide() {//显示主窗口或隐藏主窗口
     if (this->isHidden()) {
         this->showNormal();
     }
@@ -149,7 +167,7 @@ void aria2Launcher::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason re
 {
     switch (reason) {
 
-    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::Trigger: //单击
         showOrHide();
         break;
     default:
@@ -157,16 +175,17 @@ void aria2Launcher::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason re
     }
 }
 
-void aria2Launcher::start() { //启动aria2c.exe
+void aria2Launcher::Start() { //启动aria2c.exe,并嵌入窗口中
     pid = startProcess("aria2c --conf-path=aria2.conf"); //启动aria2c.exe
     //HWND Hpid = (HWND)(QString::number(pid).toInt()); //将pid转为HWND类型的数据
 
-    QLabel* showPid = new QLabel("PID - " + QString::number(pid), this); //状态栏显示aria2c.exe的pid
-    ui->statusBar->addWidget(showPid);
+    QLabel* showPid = new QLabel("Aria2c.exe PID - " + QString::number(pid), this); //状态栏显示aria2c.exe的pid
+    statusBar()->addWidget(showPid);
 
     QWindow* aria2Cmd = QWindow::fromWinId(getProcessWId(pid)); //根据pid，将aria2c.exe的窗口嵌入至主窗口中
     aria2Cmd->setFlags(aria2Cmd->flags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
     aria2CmdWidget = QWidget::createWindowContainer(aria2Cmd);
+    aria2CmdWidget->setParent(this);
     this->setCentralWidget(aria2CmdWidget);
 }
 
