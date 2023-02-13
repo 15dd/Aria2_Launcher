@@ -14,6 +14,7 @@
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
 #include <QFileInfo>
+#include <QWebEngineView>
 
 class aria2Launcher : public QMainWindow
 {
@@ -39,6 +40,7 @@ private:
     QWidget* aria2CmdWidget; //截获的aria2c.exe窗口
     QCloseEvent* event; //关闭事件
     QSystemTrayIcon* trayIcon; //托盘
+    QWebEngineView* view = NULL;
 private:
     Ui::aria2LauncherClass* ui;
     about* aboutWin = new about(this); //关于窗口
@@ -48,6 +50,9 @@ private slots:
     void showOrHide(); //显示主窗口或隐藏主窗口
     void showWindowsMessage(); //通知横幅，提示程序已进入托盘
     void showHide(); //根据设置决定是显示窗口还是启动到托盘
+    void showCmd();
+    void showWebui();
+    void showWindow();
 };
 
 

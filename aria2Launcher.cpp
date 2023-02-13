@@ -7,16 +7,22 @@ aria2Launcher::aria2Launcher(QWidget *parent)
     ui->setupUi(this);
 
     checkFile();//检测所需文件是否存在
-    uiInitialize();//ui初始化
-    showHide();//根据设置决定是显示窗口还是启动到托盘
     checkAria2Status();//检测是否已经有aria2c运行,可选择新建进程或kill已存在的进程再新建进程
+    uiInitialize();//ui初始化
+    showWindow();
+    showHide();//根据设置决定是显示窗口还是启动到托盘
 
-    this->resize((this->width())+1,(this->height())+1);//界面刷新
+    //this->resize((this->width())+1,(this->height())+1);//界面刷新
     
     connect(ui->aboutqt, &QAction::triggered, [this]() {QMessageBox::aboutQt(this, tr("About Qt")); });//弹出qt版本
     connect(ui->aboutthis, &QAction::triggered, [this]() {aboutWin->exec(); });//弹出关于窗口
     connect(ui->set, &QAction::triggered, [this]() {settingWin->exec(); });//弹出设置窗口
     connect(ui->close, &QAction::triggered, [this]() {qApp->quit(); });
+
+    connect(settingWin->ui->radioButton_7, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(true); });
+    connect(settingWin->ui->radioButton_8, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(false); showCmd(); ui->cmd->setChecked(true); });
+    connect(ui->cmd, &QAction::triggered, this, &aria2Launcher::showCmd);
+    connect(ui->webui, &QAction::triggered, this, &aria2Launcher::showWebui);
 }
 
 aria2Launcher::~aria2Launcher()
@@ -26,6 +32,37 @@ aria2Launcher::~aria2Launcher()
         KillProcess(pid);
     }
     delete ui;
+}
+
+void aria2Launcher::showWindow() {
+    if (settingWin->ui->radioButton_7->isChecked()) {
+        showWebui();
+    }
+    else {
+        this->ui->webui->setEnabled(false);
+        this->ui->cmd->setChecked(true);
+        showCmd();
+    }
+}
+
+void aria2Launcher::showWebui() {
+    centralWidget()->setParent(NULL); //在切换窗口时，centralwidget一定要先置空（即在函数的最前面）不然会有问题
+    if (view != NULL) {
+        delete view;
+        view = NULL;
+    }
+    view = new QWebEngineView(this);
+    view->setUrl(QUrl(QApplication::applicationDirPath() + "/yaaw/index.html"));
+    setCentralWidget(view);
+}
+
+void aria2Launcher::showCmd() {
+    centralWidget()->setParent(NULL); //在切换窗口时，centralwidget一定要先置空（即在函数的最前面）不然会有问题
+    if (view != NULL) {
+        delete view;
+        view = NULL;
+    }
+    setCentralWidget(aria2CmdWidget);
 }
 
 void aria2Launcher::checkFile() { //检测所需文件是否存在
@@ -78,8 +115,9 @@ void aria2Launcher::checkAria2Status() { //检测是否已经有aria2c运行,可
 }
 
 void aria2Launcher::showHide() { //根据设置决定是显示窗口还是启动到托盘
-    if (settingWin->sh == false) {
+    if (settingWin->ui->radioButton_6->isChecked()) {
         this->show();
+        this->resize((this->width()) + 1, (this->height()) + 1);//界面刷新
     }
     else {
         showWindowsMessage();
@@ -110,15 +148,9 @@ void aria2Launcher::uiInitialize() { //ui初始化
     connect(Close, &QAction::triggered, this, &aria2Launcher::quitApp);
     connect(trayIcon, &QSystemTrayIcon::activated, this, &aria2Launcher::on_activatedSysTrayIcon);
 
-    //设置打开webui按钮
-    QPushButton* openWeb = new QPushButton(this);
-    openWeb->setText("打开控制界面(Webui)");
-    statusBar()->addPermanentWidget(openWeb);
-
-    connect(openWeb, &QPushButton::clicked, [this]() {
-        QString path = "file:///" + QApplication::applicationDirPath() + "/yaaw/index.html";
-        QDesktopServices::openUrl(QUrl(path,QUrl::TolerantMode));
-        });
+    QActionGroup* group = new QActionGroup(this);
+    group->addAction(ui->cmd);
+    group->addAction(ui->webui);
 }
 
 void aria2Launcher::closeEvent(QCloseEvent* event) { //关闭事件
@@ -148,14 +180,15 @@ bool aria2Launcher::quitApp() { //退出询问
 }
 
 void aria2Launcher::showWindowsMessage() {//提示程序已进入托盘
-    if (settingWin->tn == true) {
+    if (settingWin->ui->radioButton_3->isChecked()) {
         trayIcon->showMessage("Aria2 Launcher已最小化到托盘", "如果您希望不再看到这个提示，请前往设置关闭");
     }
 }
 
-void aria2Launcher::showOrHide() {//显示主窗口或隐藏主窗口
+void aria2Launcher::showOrHide() {//显示主窗口或隐藏主窗口，托盘事件
     if (this->isHidden()) {
-        this->showNormal();
+        this->show();
+        this->resize((this->width()) + 1, (this->height()) + 1);//界面刷新
     }
     else {
         showWindowsMessage();
@@ -185,8 +218,6 @@ void aria2Launcher::Start() { //启动aria2c.exe,并嵌入窗口中
     QWindow* aria2Cmd = QWindow::fromWinId(getProcessWId(pid)); //根据pid，将aria2c.exe的窗口嵌入至主窗口中
     aria2Cmd->setFlags(aria2Cmd->flags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
     aria2CmdWidget = QWidget::createWindowContainer(aria2Cmd);
-    aria2CmdWidget->setParent(this);
-    this->setCentralWidget(aria2CmdWidget);
 }
 
 //寻找是否有已存在的aria2c.exe========================================================================

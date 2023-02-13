@@ -20,10 +20,9 @@ public slots:
 	void startHideDisabled();
 	void trayNoticeEnabled();
 	void trayNoticeDisabled();
+	void showWebuiEnabled();
+	void showWebuiDisabled();
 public:
 	QSettings* iniSetting;
-	bool tn;
-	bool sh;
-private:
 	Ui::setting* ui;
 };

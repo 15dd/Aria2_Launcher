@@ -41,6 +41,14 @@
     <addaction name="separator"/>
     <addaction name="close"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>窗口切换</string>
+    </property>
+    <addaction name="cmd"/>
+    <addaction name="webui"/>
+   </widget>
+   <addaction name="menu"/>
    <addaction name="more"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -80,7 +88,15 @@
     <string>退出程序</string>
    </property>
   </action>
-  <action name="CMD">
+  <action name="cmd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>cmd</string>
+   </property>
+  </action>
+  <action name="webui">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -88,15 +104,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>CMD</string>
-   </property>
-  </action>
-  <action name="WebUI">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>WebUI</string>
+    <string>webui</string>
    </property>
   </action>
  </widget>

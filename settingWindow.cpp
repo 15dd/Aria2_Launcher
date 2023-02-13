@@ -18,11 +18,10 @@ setting::setting(QWidget* parent) :
         settingInitialize();
     }
     else { //如果没有ini，即第一次打开程序，配置默认选项
-        this->sh = false;
-        this->tn = true;
         startWithWindowsDisabled();
         startHideDisabled();
         trayNoticeEnabled();
+        showWebuiEnabled();
     }
     
     connect(ui->radioButton,   &QRadioButton::clicked, this, &setting::startWithWindowsEnabled);
@@ -31,6 +30,8 @@ setting::setting(QWidget* parent) :
     connect(ui->radioButton_6, &QRadioButton::clicked, this, &setting::startHideDisabled);
     connect(ui->radioButton_3, &QRadioButton::clicked, this, &setting::trayNoticeEnabled);
     connect(ui->radioButton_4, &QRadioButton::clicked, this, &setting::trayNoticeDisabled);
+    connect(ui->radioButton_7, &QRadioButton::clicked, this, &setting::showWebuiEnabled);
+    connect(ui->radioButton_8, &QRadioButton::clicked, this, &setting::showWebuiDisabled);
 }
 setting::~setting() {
     delete ui;
@@ -48,21 +49,25 @@ void setting::settingInitialize() { //读取数据，初始化单选项
     QVariant sh = iniSetting->value("setting/startHide").toString();
     if (sh.toBool() == true) {
         ui->radioButton_5->setChecked(true);
-        this->sh = true;
     }
     else {
         ui->radioButton_6->setChecked(true);
-        this->sh = false;
     }
 
     QVariant tn = iniSetting->value("setting/trayNotice").toString();
     if (tn.toBool() == true) {
         ui->radioButton_3->setChecked(true);
-        this->tn = true;
     }
     else {
         ui->radioButton_4->setChecked(true);
-        this->tn = false;
+    }
+
+    QVariant sw = iniSetting->value("setting/showWebui").toString();
+    if (sw.toBool() == true) {
+        ui->radioButton_7->setChecked(true);
+    }
+    else {
+        ui->radioButton_8->setChecked(true);
     }
 }
 
@@ -78,22 +83,26 @@ void setting::startWithWindowsDisabled() {
 
 void setting::startHideEnabled() {
     iniSetting->setValue("setting/startHide","true");
-    sh = true;
 }
 
 void setting::startHideDisabled() {
     iniSetting->setValue("setting/startHide", "false");
-    sh = false;
 }
 
 void setting::trayNoticeEnabled() {
     iniSetting->setValue("setting/trayNotice", "true");
-    tn = true;
 }
 
 void setting::trayNoticeDisabled() {
     iniSetting->setValue("setting/trayNotice", "false");
-    tn = false;
+}
+
+void setting::showWebuiEnabled() {
+    iniSetting->setValue("setting/showWebui", "true");
+}
+
+void setting::showWebuiDisabled() {
+    iniSetting->setValue("setting/showWebui", "false");
 }
 
 //开机启动=============================================================================================
