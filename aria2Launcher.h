@@ -50,9 +50,9 @@ private slots:
     void showOrHide(); //显示主窗口或隐藏主窗口
     void showWindowsMessage(); //通知横幅，提示程序已进入托盘
     void showHide(); //根据设置决定是显示窗口还是启动到托盘
-    void showCmd();
-    void showWebui();
-    void showWindow();
+    void showCmd();//显示cmd
+    void showWebui();//显示webui
+    void showWindow();//决定开屏显示webui或cmd
 };
 
 

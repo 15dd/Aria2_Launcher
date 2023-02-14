@@ -2,14 +2,14 @@
 
 aria2Launcher::aria2Launcher(QWidget *parent)
     : QMainWindow(parent),
-    ui(new Ui::aria2LauncherClass)
+    ui(new Ui::aria2LauncherClass) 
 {
     ui->setupUi(this);
 
     checkFile();//检测所需文件是否存在
     checkAria2Status();//检测是否已经有aria2c运行,可选择新建进程或kill已存在的进程再新建进程
     uiInitialize();//ui初始化
-    showWindow();
+    showWindow();//根据设置决定是否开启webui
     showHide();//根据设置决定是显示窗口还是启动到托盘
 
     //this->resize((this->width())+1,(this->height())+1);//界面刷新
@@ -19,8 +19,8 @@ aria2Launcher::aria2Launcher(QWidget *parent)
     connect(ui->set, &QAction::triggered, [this]() {settingWin->exec(); });//弹出设置窗口
     connect(ui->close, &QAction::triggered, [this]() {qApp->quit(); });
 
-    connect(settingWin->ui->radioButton_7, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(true); });
-    connect(settingWin->ui->radioButton_8, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(false); showCmd(); ui->cmd->setChecked(true); });
+    connect(settingWin->ui->radioButton_7, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(true); });//webui启用时，webui选择菜单项可用
+    connect(settingWin->ui->radioButton_8, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(false); showCmd(); ui->cmd->setChecked(true); });//webui禁用时，webui选择菜单项禁用，将当前主窗口显示画面变为cmd界面
     connect(ui->cmd, &QAction::triggered, this, &aria2Launcher::showCmd);
     connect(ui->webui, &QAction::triggered, this, &aria2Launcher::showWebui);
 }
@@ -34,7 +34,7 @@ aria2Launcher::~aria2Launcher()
     delete ui;
 }
 
-void aria2Launcher::showWindow() {
+void aria2Launcher::showWindow() { //决定开屏显示webui或cmd
     if (settingWin->ui->radioButton_7->isChecked()) {
         showWebui();
     }
@@ -45,7 +45,7 @@ void aria2Launcher::showWindow() {
     }
 }
 
-void aria2Launcher::showWebui() {
+void aria2Launcher::showWebui() { //显示webui
     centralWidget()->setParent(NULL); //在切换窗口时，centralwidget一定要先置空（即在函数的最前面）不然会有问题
     if (view != NULL) {
         delete view;
@@ -56,7 +56,7 @@ void aria2Launcher::showWebui() {
     setCentralWidget(view);
 }
 
-void aria2Launcher::showCmd() {
+void aria2Launcher::showCmd() { //显示cmd
     centralWidget()->setParent(NULL); //在切换窗口时，centralwidget一定要先置空（即在函数的最前面）不然会有问题
     if (view != NULL) {
         delete view;
@@ -144,6 +144,7 @@ void aria2Launcher::uiInitialize() { //ui初始化
     trayIcon->setContextMenu(Menu);
     trayIcon->show();
 
+    //菜单初始化
     connect(SOH, &QAction::triggered, this, &aria2Launcher::showOrHide);
     connect(Close, &QAction::triggered, this, &aria2Launcher::quitApp);
     connect(trayIcon, &QSystemTrayIcon::activated, this, &aria2Launcher::on_activatedSysTrayIcon);
