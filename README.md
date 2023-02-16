@@ -1,4 +1,18 @@
-﻿# Aria2 Launcher
+﻿<p align="center">
+  <a>
+    <img src="/resource/img/ico.png" alt="Logo" width="100" height="100">
+  </a>
+
+  <h2 align="center">Aria2 Launcher</h2>
+  <p align="center">
+    一个专为 <b>小白</b> 设计的 <b>Aria2 启动器</b>
+    <br />
+    <a href="https://github.com/15dd/Aria2_Launcher/releases"><b>下载</b></a>
+    <br />
+  </p>
+
+</p>
+
 - 使用C++和Qt6编写的程序
 - 该程序为Aria2c.exe（即aria2）的一键启动器，专为小白设计
 - 已集成webui（yaaw）界面
@@ -15,5 +29,6 @@
    - 第二种方法：使用浏览器扩展`yaaw for chrome`或`aria2 for edge`直接自动下载
 
 ## 截图
-![主界面](resource/readme/1.png)
-![设置](resource/readme/2.png)
+<center class="half">
+    <img src="/resource/readme/1.png" height="200"/>&nbsp<img src="/resource/readme/2.png" height="200"/>
+</center>

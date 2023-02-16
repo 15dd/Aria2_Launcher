@@ -116,7 +116,11 @@ void aria2Launcher::checkAria2Status() { //检测是否已经有aria2c运行,可
 
 void aria2Launcher::showHide() { //根据设置决定是显示窗口还是启动到托盘
     if (settingWin->ui->radioButton_6->isChecked()) {
-        this->show();
+        this->showNormal();
+
+        this->setWindowState(Qt::WindowActive);//窗口置顶
+        this->activateWindow();
+
         this->resize((this->width()) + 1, (this->height()) + 1);//界面刷新
     }
     else {
@@ -188,7 +192,11 @@ void aria2Launcher::showWindowsMessage() {//提示程序已进入托盘
 
 void aria2Launcher::showOrHide() {//显示主窗口或隐藏主窗口，托盘事件
     if (this->isHidden()) {
-        this->show();
+        this->showNormal();
+
+        this->setWindowState(Qt::WindowActive);//窗口置顶
+        this->activateWindow();
+
         this->resize((this->width()) + 1, (this->height()) + 1);//界面刷新
     }
     else {
