@@ -28,6 +28,10 @@
    - 第一种方法：启用webui（默认启动），下载文件时复制链接，之后点击`添加`，将链接填入即可
    - 第二种方法：使用浏览器扩展`yaaw for chrome`或`aria2 for edge`直接自动下载
 
+## 其他
+设置程序开机自启的注册表在`HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run`
+需要时可自行删除
+
 ## 截图
 ![1](/resource/readme/1.png)
 ![2](/resource/readme/2.png)
