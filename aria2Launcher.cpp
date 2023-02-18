@@ -6,13 +6,20 @@ aria2Launcher::aria2Launcher(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //检测是否已开启aria2 launcher
+    static QSharedMemory* shareMem = new QSharedMemory("SingleApp"); //创建“SingleApp”的共享内存块
+    if (!shareMem->create(1))//创建大小1b的内存
+    {   
+        QApplication::beep();
+        QMessageBox::warning(this, "警告", "Aria2 Launcher已在运行");
+        exit(-1); //创建失败，说明已经有一个程序运行，退出当前程序
+    }//https://blog.csdn.net/qianlixiaomage/article/details/125851086
+
     checkFile();//检测所需文件是否存在
     checkAria2Status();//检测是否已经有aria2c运行,可选择新建进程或kill已存在的进程再新建进程
     uiInitialize();//ui初始化
     showWindow();//根据设置决定是否开启webui
     showHide();//根据设置决定是显示窗口还是启动到托盘
-
-    //this->resize((this->width())+1,(this->height())+1);//界面刷新
     
     connect(ui->aboutqt, &QAction::triggered, [this]() {QMessageBox::aboutQt(this, tr("About Qt")); });//弹出qt版本
     connect(ui->aboutthis, &QAction::triggered, [this]() {aboutWin->exec(); });//弹出关于窗口
@@ -72,20 +79,24 @@ void aria2Launcher::checkFile() { //检测所需文件是否存在
     QFileInfo file3("aria2.session");
     QFileInfo file4("yaaw");
     if (!file1.isFile()) {
-        QMessageBox::critical(this, "缺少文件", "aria2c.exe不存在，无法启动");
-        exit(0);
+        QApplication::beep();
+        QMessageBox::warning(this, "缺少文件", "aria2c.exe不存在，无法启动");
+        exit(-1);
     }
     else if (!file2.isFile()) {
-        QMessageBox::critical(this, "缺少文件", "aria2.conf不存在，无法启动");
-        exit(0);
+        QApplication::beep();
+        QMessageBox::warning(this, "缺少文件", "aria2.conf不存在，无法启动");
+        exit(-1);
     }
     else if (!file3.isFile()) {
-        QMessageBox::critical(this, "缺少文件", "aria2.session不存在，无法启动");
-        exit(0);
+        QApplication::beep();
+        QMessageBox::warning(this, "缺少文件", "aria2.session不存在，无法启动");
+        exit(-1);
     }
     else if (!file4.isDir()) {
-        QMessageBox::critical(this, "缺少文件夹", "/yaaw/不存在，无法启动");
-        exit(0);
+        QApplication::beep();
+        QMessageBox::warning(this, "缺少文件夹", "/yaaw/不存在，无法启动");
+        exit(-1);
     }
 }
 
@@ -94,6 +105,7 @@ void aria2Launcher::checkAria2Status() { //检测是否已经有aria2c运行,可
     bool flag = true; 
     int findPid = (int)FindProcessIDByName("aria2c.exe"); //检测aria2c是否已经存在
     while (findPid != 0 && flag == true) { //如果aria2c.exe已存在
+        QApplication::beep();
         int id = QMessageBox::information(this, "提示", QString("第%1次检测\naria2c.exe(PID:%2)已在运行(造成这种情况的原因可能是以下几点)\n1：有正在使用aria2c的应用\n2：您未正确关闭此软件或其他使用aria2c的软件\n\n继续：创建一个新的aria2c进程，不影响已存在的进程\n结束进程：结束已存在的aria2c进程(请确保您没有使用此进程下载文件中)\n\n如果您不知道如何选择，请点击<继续>").arg(n).arg(findPid), QString("继续"), QString("结束进程(PID:%1)").arg(findPid), 0);
         switch (id) {
         case 0: { //继续，选择此选项时退出循环，不再检测，直接创建新进程
@@ -150,7 +162,7 @@ void aria2Launcher::uiInitialize() { //ui初始化
 
     //菜单初始化
     connect(SOH, &QAction::triggered, this, &aria2Launcher::showOrHide);
-    connect(Close, &QAction::triggered, this, &aria2Launcher::quitApp);
+    connect(Close, &QAction::triggered, [this]() {qApp->quit(); });
     connect(trayIcon, &QSystemTrayIcon::activated, this, &aria2Launcher::on_activatedSysTrayIcon);
 
     QActionGroup* group = new QActionGroup(this);
@@ -159,30 +171,26 @@ void aria2Launcher::uiInitialize() { //ui初始化
 }
 
 void aria2Launcher::closeEvent(QCloseEvent* event) { //关闭事件
-    if (!quitApp()) { 
-        event->ignore();
-    }
-}
-
-bool aria2Launcher::quitApp() { //退出询问
+    QApplication::beep();
     int id = QMessageBox::information(this, "二次确认", "是否退出程序?\n退出请确保没有文件正在下载中", QString("退出"), QString("最小化到系统托盘"), QString("取消"), 2);
     switch (id) {
     case 0: {
-        qApp->quit();
+        event->accept();
         break;
     }
     case 1: {
         this->hide();
         showWindowsMessage();//提示程序已进入托盘
-        return false;
+        event->ignore();
         break;
     }
     case 2: {
-        return false;
+        event->ignore();
         break;
     }
     }
 }
+
 
 void aria2Launcher::showWindowsMessage() {//提示程序已进入托盘
     if (settingWin->ui->radioButton_3->isChecked()) {

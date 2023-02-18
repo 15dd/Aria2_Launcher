@@ -29,6 +29,5 @@
    - 第二种方法：使用浏览器扩展`yaaw for chrome`或`aria2 for edge`直接自动下载
 
 ## 截图
-<center class="half">
-    <img src="/resource/readme/1.png" height="200"/>&nbsp<img src="/resource/readme/2.png" height="200"/>
-</center>
+![1](/resource/readme/1.png)
+![2](/resource/readme/2.png)

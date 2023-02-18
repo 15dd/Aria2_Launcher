@@ -15,6 +15,7 @@
 #include <QCloseEvent>
 #include <QFileInfo>
 #include <QWebEngineView>
+#include <QSharedMemory>
 
 class aria2Launcher : public QMainWindow
 {
@@ -33,7 +34,6 @@ public:
     void uiInitialize();//ui初始化
     void checkFile();//检测所需文件是否存在
     void closeEvent(QCloseEvent* event);//关闭事件
-    bool quitApp();//退出询问
     DWORD FindProcessIDByName(const std::string& processName); //寻找aria2c.exe的pid
 private:
     qint64 pid; //pid
