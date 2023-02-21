@@ -35,6 +35,8 @@ public:
     void checkFile();//检测所需文件是否存在
     void closeEvent(QCloseEvent* event);//关闭事件
     DWORD FindProcessIDByName(const std::string& processName); //寻找aria2c.exe的pid
+    void startWithWindows(int state); //开机启动
+    void showInitialize();
 private:
     qint64 pid; //pid
     QWidget* aria2CmdWidget; //截获的aria2c.exe窗口
@@ -49,10 +51,9 @@ private slots:
     void on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason); //单击托盘图标事件
     void showOrHide(); //显示主窗口或隐藏主窗口
     void showWindowsMessage(); //通知横幅，提示程序已进入托盘
-    void showHide(); //根据设置决定是显示窗口还是启动到托盘
     void showCmd();//显示cmd
     void showWebui();//显示webui
-    void showWindow();//决定开屏显示webui或cmd
+    void isWebui(int state);
 };
 
 

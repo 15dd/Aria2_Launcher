@@ -6,7 +6,7 @@ aria2Launcher::aria2Launcher(QWidget *parent)
 {
     ui->setupUi(this);
 
-    //检测是否已开启aria2 launcher
+    //检测是否已开启aria2 launcher=================================================
     static QSharedMemory* shareMem = new QSharedMemory("SingleApp"); //创建“SingleApp”的共享内存块
     if (!shareMem->create(1))//创建大小1b的内存
     {   
@@ -14,22 +14,25 @@ aria2Launcher::aria2Launcher(QWidget *parent)
         QMessageBox::warning(this, "警告", "Aria2 Launcher已在运行");
         exit(-1); //创建失败，说明已经有一个程序运行，退出当前程序
     }//https://blog.csdn.net/qianlixiaomage/article/details/125851086
+    //end=========================================================================
 
     checkFile();//检测所需文件是否存在
     checkAria2Status();//检测是否已经有aria2c运行,可选择新建进程或kill已存在的进程再新建进程
     uiInitialize();//ui初始化
-    showWindow();//根据设置决定是否开启webui
-    showHide();//根据设置决定是显示窗口还是启动到托盘
+    showInitialize();//显示初始化
     
     connect(ui->aboutqt, &QAction::triggered, [this]() {QMessageBox::aboutQt(this, tr("About Qt")); });//弹出qt版本
     connect(ui->aboutthis, &QAction::triggered, [this]() {aboutWin->exec(); });//弹出关于窗口
     connect(ui->set, &QAction::triggered, [this]() {settingWin->exec(); });//弹出设置窗口
     connect(ui->close, &QAction::triggered, [this]() {qApp->quit(); });
-
-    connect(settingWin->ui->radioButton_7, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(true); });//webui启用时，webui选择菜单项可用
-    connect(settingWin->ui->radioButton_8, &QRadioButton::clicked, [this]() {ui->webui->setEnabled(false); showCmd(); ui->cmd->setChecked(true); });//webui禁用时，webui选择菜单项禁用，将当前主窗口显示画面变为cmd界面
     connect(ui->cmd, &QAction::triggered, this, &aria2Launcher::showCmd);
     connect(ui->webui, &QAction::triggered, this, &aria2Launcher::showWebui);
+    connect(settingWin->ui->sww, SIGNAL(stateChanged(int)), this, SLOT(startWithWindows(int)), Qt::UniqueConnection);
+    connect(settingWin->ui->isWebui, SIGNAL(stateChanged(int)), this, SLOT(isWebui(int))); //是否启用webui
+
+    connect(settingWin->ui->yaaw, &QRadioButton::clicked, this, &aria2Launcher::showWebui);
+    connect(settingWin->ui->aria2webui, &QRadioButton::clicked, this, &aria2Launcher::showWebui);
+    connect(settingWin->ui->ariang, &QRadioButton::clicked, this, &aria2Launcher::showWebui);
 }
 
 aria2Launcher::~aria2Launcher()
@@ -41,14 +44,40 @@ aria2Launcher::~aria2Launcher()
     delete ui;
 }
 
-void aria2Launcher::showWindow() { //决定开屏显示webui或cmd
-    if (settingWin->ui->radioButton_7->isChecked()) {
+void aria2Launcher::isWebui(int state) {
+    if (state == Qt::Checked) { //webui启用时，webui选择菜单项可用
+        ui->webui->setEnabled(true);
+        showWebui();
+    }
+    else { //webui禁用时，webui选择菜单项禁用，将当前主窗口显示画面变为cmd界面
+        ui->webui->setEnabled(false); 
+        showCmd(); 
+        ui->cmd->setChecked(true);
+    }
+}
+
+void aria2Launcher::showInitialize() {
+    //决定开屏显示webui或cmd
+    if (settingWin->ui->isWebui->checkState() == Qt::Checked) {
         showWebui();
     }
     else {
         this->ui->webui->setEnabled(false);
         this->ui->cmd->setChecked(true);
         showCmd();
+    }
+
+    //根据设置决定是显示窗口还是启动到托盘
+    if (settingWin->ui->sh->checkState() == Qt::Checked) {
+        showWindowsMessage();
+    }
+    else {
+        this->showNormal();
+
+        this->setWindowState(Qt::WindowActive);//窗口置顶
+        this->activateWindow();
+
+        this->resize((this->width()) + 1, (this->height()) + 1);//界面刷新
     }
 }
 
@@ -59,7 +88,15 @@ void aria2Launcher::showWebui() { //显示webui
         view = NULL;
     }
     view = new QWebEngineView(this);
-    view->setUrl(QUrl(QApplication::applicationDirPath() + "/yaaw/index.html"));
+    if (settingWin->ui->yaaw->isChecked()) {
+        view->load(QUrl("file:///" + QApplication::applicationDirPath() + "/webui/yaaw/index.html"));
+    }
+    else if (settingWin->ui->aria2webui->isChecked()) {
+        view->load(QUrl("file:///" + QApplication::applicationDirPath() + "/webui/aria2webui/index.html"));
+    }
+    else {
+        view->load(QUrl("file:///" + QApplication::applicationDirPath() + "/webui/ariang/index.html"));
+    }
     setCentralWidget(view);
 }
 
@@ -77,7 +114,7 @@ void aria2Launcher::checkFile() { //检测所需文件是否存在
     QFileInfo file1("aria2c.exe");
     QFileInfo file2("aria2.conf");
     QFileInfo file3("aria2.session");
-    QFileInfo file4("yaaw");
+    QFileInfo file4("webui");
     if (!file1.isFile()) {
         QApplication::beep();
         QMessageBox::warning(this, "缺少文件", "aria2c.exe不存在，无法启动");
@@ -95,7 +132,7 @@ void aria2Launcher::checkFile() { //检测所需文件是否存在
     }
     else if (!file4.isDir()) {
         QApplication::beep();
-        QMessageBox::warning(this, "缺少文件夹", "/yaaw/不存在，无法启动");
+        QMessageBox::warning(this, "缺少文件夹", "/webui/不存在，无法启动");
         exit(-1);
     }
 }
@@ -125,21 +162,6 @@ void aria2Launcher::checkAria2Status() { //检测是否已经有aria2c运行,可
         Start();
     }
 }
-
-void aria2Launcher::showHide() { //根据设置决定是显示窗口还是启动到托盘
-    if (settingWin->ui->radioButton_6->isChecked()) {
-        this->showNormal();
-
-        this->setWindowState(Qt::WindowActive);//窗口置顶
-        this->activateWindow();
-
-        this->resize((this->width()) + 1, (this->height()) + 1);//界面刷新
-    }
-    else {
-        showWindowsMessage();
-    }
-}
-
 
 void aria2Launcher::uiInitialize() { //ui初始化
     //托盘初始化
@@ -193,7 +215,7 @@ void aria2Launcher::closeEvent(QCloseEvent* event) { //关闭事件
 
 
 void aria2Launcher::showWindowsMessage() {//提示程序已进入托盘
-    if (settingWin->ui->radioButton_3->isChecked()) {
+    if (settingWin->ui->tn->checkState() == Qt::Checked) {
         trayIcon->showMessage("Aria2 Launcher已最小化到托盘", "如果您希望不再看到这个提示，请前往设置关闭");
     }
 }
@@ -367,3 +389,29 @@ WId aria2Launcher::getProcessWId(qint64 pid) //pid转为WId类型的数据
 }
 //https://blog.csdn.net/xiaopei_yan/article/details/125931178
 //end=============================================================================================
+
+//开机启动=============================================================================================
+//https://blog.csdn.net/qq_41632571/article/details/126105512
+//设置/取消自启动   
+//isStart: true(开机启动)    false(开机不启动)
+void aria2Launcher::startWithWindows(int state)
+{
+    QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+    QString application_name = QApplication::applicationName();
+    QString application_path = QCoreApplication::applicationFilePath();
+    if (state == Qt::Checked) {
+        //设置开机自启注册表
+        application_path.replace(".exe", ".lnk");
+        if (!QFile::exists(application_path)) {
+            QFile::link(QCoreApplication::applicationFilePath(), application_name + ".lnk");
+        }
+        QString strAppPath = QDir::toNativeSeparators(application_path);
+        reg.setValue(application_name, strAppPath);
+    }
+    else {
+        //取消开机自启注册表
+        reg.remove(application_name);
+    }
+
+}
+//end=================================================================================================

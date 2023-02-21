@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
-    <height>383</height>
+    <width>1186</width>
+    <height>642</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>617</width>
+     <width>1186</width>
      <height>22</height>
     </rect>
    </property>
@@ -92,8 +92,12 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="aria2Launcher.qrc">
+     <normaloff>:/aria2Launcher/resource/img/cmd.png</normaloff>:/aria2Launcher/resource/img/cmd.png</iconset>
+   </property>
    <property name="text">
-    <string>cmd</string>
+    <string>Aria2c输出</string>
    </property>
   </action>
   <action name="webui">
@@ -103,8 +107,12 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="aria2Launcher.qrc">
+     <normaloff>:/aria2Launcher/resource/img/control-panel.png</normaloff>:/aria2Launcher/resource/img/control-panel.png</iconset>
+   </property>
    <property name="text">
-    <string>webui</string>
+    <string>控制面板（webui）</string>
    </property>
   </action>
  </widget>

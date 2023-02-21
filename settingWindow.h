@@ -12,16 +12,15 @@ public:
 	~setting();
 
 	void settingInitialize(); //读取数据，初始化单选项
-	void startWithWindows(bool isStart); //开机启动
 public slots:
-	void startWithWindowsEnabled();
-	void startWithWindowsDisabled();
-	void startHideEnabled();
-	void startHideDisabled();
-	void trayNoticeEnabled();
-	void trayNoticeDisabled();
-	void showWebuiEnabled();
-	void showWebuiDisabled();
+	void startWithWindows(int state);
+	void startHide(int state);
+	void trayNotice(int state);
+	void showWebui(int state);
+
+	void yaaw();
+	void aria2webui();
+	void ariang();
 public:
 	QSettings* iniSetting;
 	Ui::setting* ui;

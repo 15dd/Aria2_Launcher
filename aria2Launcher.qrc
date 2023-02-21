@@ -1,10 +1,12 @@
 <RCC>
-    <qresource prefix="/aria2Launcher">
-        <file>resource/img/qt-logo.png</file>
-        <file>resource/img/ico.png</file>
-        <file>resource/img/close.png</file>
-        <file>resource/img/show.png</file>
-        <file>resource/img/github Logo.png</file>
-        <file>resource/img/setting.png</file>
-    </qresource>
+  <qresource prefix="/aria2Launcher">
+    <file>resource/img/cmd.png</file>
+    <file>resource/img/control-panel.png</file>
+    <file>resource/img/qt-logo.png</file>
+    <file>resource/img/ico.png</file>
+    <file>resource/img/close.png</file>
+    <file>resource/img/show.png</file>
+    <file>resource/img/github Logo.png</file>
+    <file>resource/img/setting.png</file>
+  </qresource>
 </RCC>

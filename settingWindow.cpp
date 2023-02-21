@@ -18,21 +18,22 @@ setting::setting(QWidget* parent) :
         settingInitialize();
     }
     else { //如果没有ini，即第一次打开程序，配置默认选项
-        startWithWindowsDisabled();
-        startHideDisabled();
-        trayNoticeEnabled();
-        showWebuiEnabled();
+        startWithWindows(Qt::Unchecked);
+        startHide(Qt::Unchecked);
+        trayNotice(Qt::Checked);
+        showWebui(Qt::Checked);
     }
     
-    connect(ui->radioButton,   &QRadioButton::clicked, this, &setting::startWithWindowsEnabled);
-    connect(ui->radioButton_2, &QRadioButton::clicked, this, &setting::startWithWindowsDisabled);
-    connect(ui->radioButton_5, &QRadioButton::clicked, this, &setting::startHideEnabled);
-    connect(ui->radioButton_6, &QRadioButton::clicked, this, &setting::startHideDisabled);
-    connect(ui->radioButton_3, &QRadioButton::clicked, this, &setting::trayNoticeEnabled);
-    connect(ui->radioButton_4, &QRadioButton::clicked, this, &setting::trayNoticeDisabled);
-    connect(ui->radioButton_7, &QRadioButton::clicked, this, &setting::showWebuiEnabled);
-    connect(ui->radioButton_8, &QRadioButton::clicked, this, &setting::showWebuiDisabled);
+    connect(ui->sww, SIGNAL(stateChanged(int)), this, SLOT(startWithWindows(int)), Qt::UniqueConnection);
+    connect(ui->sh, SIGNAL(stateChanged(int)), this, SLOT(startHide(int)));
+    connect(ui->tn, SIGNAL(stateChanged(int)), this, SLOT(trayNotice(int)));
+    connect(ui->isWebui, SIGNAL(stateChanged(int)), this, SLOT(showWebui(int)));
+
+    connect(ui->yaaw, SIGNAL(clicked()), this, SLOT(yaaw()));
+    connect(ui->aria2webui, SIGNAL(clicked()), this, SLOT(aria2webui()));
+    connect(ui->ariang, SIGNAL(clicked()), this, SLOT(ariang()));
 }
+
 setting::~setting() {
     delete ui;
 }
@@ -40,93 +41,94 @@ setting::~setting() {
 void setting::settingInitialize() { //读取数据，初始化单选项
     QVariant sww = iniSetting->value("setting/startWithWindows").toString();
     if (sww.toBool() == true) {
-        ui->radioButton->setChecked(true);
+        ui->sww->setCheckState(Qt::Checked);
     }
     else {
-        ui->radioButton_2->setChecked(true);
+        ui->sww->setCheckState(Qt::Unchecked);
     }
 
     QVariant sh = iniSetting->value("setting/startHide").toString();
     if (sh.toBool() == true) {
-        ui->radioButton_5->setChecked(true);
+        ui->sh->setCheckState(Qt::Checked);
     }
     else {
-        ui->radioButton_6->setChecked(true);
+        ui->sh->setCheckState(Qt::Unchecked);
     }
 
     QVariant tn = iniSetting->value("setting/trayNotice").toString();
     if (tn.toBool() == true) {
-        ui->radioButton_3->setChecked(true);
+        ui->tn->setCheckState(Qt::Checked);
     }
     else {
-        ui->radioButton_4->setChecked(true);
+        ui->tn->setCheckState(Qt::Unchecked);
     }
 
     QVariant sw = iniSetting->value("setting/showWebui").toString();
     if (sw.toBool() == true) {
-        ui->radioButton_7->setChecked(true);
+        ui->isWebui->setCheckState(Qt::Checked);
     }
     else {
-        ui->radioButton_8->setChecked(true);
+        ui->isWebui->setCheckState(Qt::Unchecked);
+    }
+
+    QVariant ws = iniSetting->value("setting/webuiStyle").toString();
+    switch (ws.toInt()) {
+    case 1:
+        ui->yaaw->setChecked(true);
+        break;
+    case 2:
+        ui->aria2webui->setChecked(true);
+        break;
+    case 3:
+        ui->ariang->setChecked(true);
+        break;
     }
 }
 
-void setting::startWithWindowsEnabled() {
-    iniSetting->setValue("setting/startWithWindows","true");
-    startWithWindows(true);
-}
-
-void setting::startWithWindowsDisabled() {
-    iniSetting->setValue("setting/startWithWindows","false");
-    startWithWindows(false);
-}
-
-void setting::startHideEnabled() {
-    iniSetting->setValue("setting/startHide","true");
-}
-
-void setting::startHideDisabled() {
-    iniSetting->setValue("setting/startHide", "false");
-}
-
-void setting::trayNoticeEnabled() {
-    iniSetting->setValue("setting/trayNotice", "true");
-}
-
-void setting::trayNoticeDisabled() {
-    iniSetting->setValue("setting/trayNotice", "false");
-}
-
-void setting::showWebuiEnabled() {
-    iniSetting->setValue("setting/showWebui", "true");
-}
-
-void setting::showWebuiDisabled() {
-    iniSetting->setValue("setting/showWebui", "false");
-}
-
-//开机启动=============================================================================================
-//https://blog.csdn.net/qq_41632571/article/details/126105512
-//设置/取消自启动   
-//isStart: true(开机启动)    false(开机不启动)
-void setting::startWithWindows(bool isStart)
-{
-    QSettings reg("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-    QString application_name = QApplication::applicationName();
-    QString application_path = QCoreApplication::applicationFilePath();
-    if (isStart) {
-        //设置开机自启注册表
-        application_path.replace(".exe", ".lnk");
-        if (!QFile::exists(application_path)) {
-            QFile::link(QCoreApplication::applicationFilePath(), application_name + ".lnk");
-        }
-        QString strAppPath = QDir::toNativeSeparators(application_path);
-        reg.setValue(application_name, strAppPath);
+void setting::startWithWindows(int state) {
+    if (state == Qt::Checked) {
+        iniSetting->setValue("setting/startWithWindows", "true");
     }
     else {
-        //取消开机自启注册表
-        reg.remove(application_name);
+        iniSetting->setValue("setting/startWithWindows", "false");
     }
-
 }
-//end=================================================================================================
+
+void setting::startHide(int state) {
+    if (state == Qt::Checked) {
+        iniSetting->setValue("setting/startHide", "true");
+    }
+    else {
+        iniSetting->setValue("setting/startHide", "false");
+    }
+}
+
+void setting::trayNotice(int state) {
+    if (state == Qt::Checked) {
+        iniSetting->setValue("setting/trayNotice", "true");
+    }
+    else {
+        iniSetting->setValue("setting/trayNotice", "false");
+    }
+}
+
+void setting::showWebui(int state) {
+    if (state == Qt::Checked) {
+        iniSetting->setValue("setting/showWebui", "true");
+    }
+    else {
+        iniSetting->setValue("setting/showWebui", "false");
+    }
+}
+
+void setting::yaaw() {
+    iniSetting->setValue("setting/webuiStyle", "1");
+}
+
+void setting::aria2webui() {
+    iniSetting->setValue("setting/webuiStyle", "2");
+}
+
+void setting::ariang() {
+    iniSetting->setValue("setting/webuiStyle", "3");
+}
