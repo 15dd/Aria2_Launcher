@@ -47,12 +47,17 @@ aria2Launcher::~aria2Launcher()
 void aria2Launcher::isWebui(int state) {
     if (state == Qt::Checked) { //webui启用时，webui选择菜单项可用
         ui->webui->setEnabled(true);
+        ui->webui->setChecked(true);
         showWebui();
+
+        settingWin->ui->groupBox_2->setEnabled(true);
     }
     else { //webui禁用时，webui选择菜单项禁用，将当前主窗口显示画面变为cmd界面
         ui->webui->setEnabled(false); 
         showCmd(); 
         ui->cmd->setChecked(true);
+
+        settingWin->ui->groupBox_2->setEnabled(false);
     }
 }
 

@@ -12,7 +12,7 @@ public:
 	~setting();
 
 	void settingInitialize(); //读取数据，初始化单选项
-public slots:
+private slots:
 	void startWithWindows(int state);
 	void startHide(int state);
 	void trayNotice(int state);

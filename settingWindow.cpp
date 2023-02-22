@@ -24,7 +24,7 @@ setting::setting(QWidget* parent) :
         showWebui(Qt::Checked);
     }
     
-    connect(ui->sww, SIGNAL(stateChanged(int)), this, SLOT(startWithWindows(int)), Qt::UniqueConnection);
+    connect(ui->sww, SIGNAL(stateChanged(int)), this, SLOT(startWithWindows(int)));
     connect(ui->sh, SIGNAL(stateChanged(int)), this, SLOT(startHide(int)));
     connect(ui->tn, SIGNAL(stateChanged(int)), this, SLOT(trayNotice(int)));
     connect(ui->isWebui, SIGNAL(stateChanged(int)), this, SLOT(showWebui(int)));

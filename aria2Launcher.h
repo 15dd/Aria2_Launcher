@@ -35,7 +35,6 @@ public:
     void checkFile();//检测所需文件是否存在
     void closeEvent(QCloseEvent* event);//关闭事件
     DWORD FindProcessIDByName(const std::string& processName); //寻找aria2c.exe的pid
-    void startWithWindows(int state); //开机启动
     void showInitialize();
 private:
     qint64 pid; //pid
@@ -54,6 +53,7 @@ private slots:
     void showCmd();//显示cmd
     void showWebui();//显示webui
     void isWebui(int state);
+    void startWithWindows(int state); //开机启动
 };
 
 
