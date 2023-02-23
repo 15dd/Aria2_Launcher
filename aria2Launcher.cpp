@@ -31,7 +31,6 @@ aria2Launcher::aria2Launcher(QWidget *parent)
     connect(settingWin->ui->isWebui, SIGNAL(stateChanged(int)), this, SLOT(isWebui(int))); //是否启用webui
 
     connect(settingWin->ui->yaaw, &QRadioButton::clicked, this, &aria2Launcher::showWebui);
-    connect(settingWin->ui->aria2webui, &QRadioButton::clicked, this, &aria2Launcher::showWebui);
     connect(settingWin->ui->ariang, &QRadioButton::clicked, this, &aria2Launcher::showWebui);
 }
 
@@ -95,9 +94,6 @@ void aria2Launcher::showWebui() { //显示webui
     view = new QWebEngineView(this);
     if (settingWin->ui->yaaw->isChecked()) {
         view->load(QUrl("file:///" + QApplication::applicationDirPath() + "/webui/yaaw/index.html"));
-    }
-    else if (settingWin->ui->aria2webui->isChecked()) {
-        view->load(QUrl("file:///" + QApplication::applicationDirPath() + "/webui/aria2webui/index.html"));
     }
     else {
         view->load(QUrl("file:///" + QApplication::applicationDirPath() + "/webui/ariang/index.html"));

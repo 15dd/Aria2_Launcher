@@ -19,7 +19,6 @@ private slots:
 	void showWebui(int state);
 
 	void yaaw();
-	void aria2webui();
 	void ariang();
 public:
 	QSettings* iniSetting;

@@ -30,7 +30,6 @@ setting::setting(QWidget* parent) :
     connect(ui->isWebui, SIGNAL(stateChanged(int)), this, SLOT(showWebui(int)));
 
     connect(ui->yaaw, SIGNAL(clicked()), this, SLOT(yaaw()));
-    connect(ui->aria2webui, SIGNAL(clicked()), this, SLOT(aria2webui()));
     connect(ui->ariang, SIGNAL(clicked()), this, SLOT(ariang()));
 }
 
@@ -77,9 +76,6 @@ void setting::settingInitialize() { //读取数据，初始化单选项
         ui->yaaw->setChecked(true);
         break;
     case 2:
-        ui->aria2webui->setChecked(true);
-        break;
-    case 3:
         ui->ariang->setChecked(true);
         break;
     }
@@ -125,10 +121,6 @@ void setting::yaaw() {
     iniSetting->setValue("setting/webuiStyle", "1");
 }
 
-void setting::aria2webui() {
-    iniSetting->setValue("setting/webuiStyle", "2");
-}
-
 void setting::ariang() {
-    iniSetting->setValue("setting/webuiStyle", "3");
+    iniSetting->setValue("setting/webuiStyle", "2");
 }
