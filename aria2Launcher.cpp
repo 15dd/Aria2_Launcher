@@ -68,6 +68,9 @@ void aria2Launcher::showInitialize() {
     else {
         this->ui->webui->setEnabled(false);
         this->ui->cmd->setChecked(true);
+
+        settingWin->ui->groupBox_2->setEnabled(false);
+
         showCmd();
     }
 
